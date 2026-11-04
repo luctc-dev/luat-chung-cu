@@ -2,12 +2,6 @@
   "framework": null,
   "buildCommand": "",
   "outputDirectory": ".",
-  "rewrites": [
-    {
-      "source": "/",
-      "destination": "/so-do-hanh-dong.html"
-    }
-  ],
   "headers": [
     {
       "source": "/(og-image.png|apple-touch-icon.png)",
