@@ -74,6 +74,15 @@ function lawRow(...texts) {
   const cs = [...new Set(texts.filter(Boolean).flatMap(citesOf))];
   return cs.length ? `<div class="w-law"><span>Căn cứ:</span> ${cs.map(c => rich(c)).join(' ')}</div>` : '';
 }
+/* bảng kiểm (checklist): danh mục để BQT đánh dấu có / chưa có, mặc định thu gọn */
+function checkBox(c) {
+  if (!c) return '';
+  const n = c.groups.reduce((a, g) => a + g.items.length, 0);
+  return `<details class="w-check"><summary>${ic('clipboard')}<span>${esc(c.title)} <small>(${n} mục)</small></span>${ic('chev')}</summary>
+    ${c.intro ? `<p class="intro">${txt(c.intro)}</p>` : ''}
+    ${c.groups.map(g => `<h4>${esc(g.title)}</h4><ol>${g.items.map(x => `<li>${txt(stripCites(x))}</li>`).join('')}</ol>${lawRow(g.cite, ...g.items)}`).join('')}
+    ${c.note ? `<p class="note">${txt(stripCites(c.note))}</p>${lawRow(c.note)}` : ''}</details>`;
+}
 function dueHtml(it) {
   const s = realStatus(it);
   if (s === 'done') return it.date ? `<span class="w-date">${fmt(it.date)}</span>` : '';
@@ -143,6 +152,7 @@ function stepLi(it, i, t) {
       <div class="w-row"><span class="w-who">${ic('user')}${esc(WHO[it.who] || it.who)}</span>${pill(s)}${dueHtml(it)}</div>
       ${it.note ? `<p class="note">${txt(stripCites(it.note))}</p>` : ''}
       ${s === 'overdue' ? actBox(it) : ''}
+      ${checkBox(it.checklist)}
       ${(it.docs || []).length ? `<div class="docs">${it.docs.map(k => txt(`{{${k}}}`)).join('')}</div>` : ''}
       ${it.template ? `<button class="w-btn${isNext ? ' primary' : ''}" data-tpl="${esc(it.template)}">${ic('pen')}Soạn văn bản mẫu</button>` : ''}
       ${lawRow(it.text, it.cite, it.note)}</div></li>`;
@@ -186,7 +196,7 @@ function viewFaq() {
   const people = () => `<ul class="w-people">${W.building.bqt.members.map(m => `<li><b>${esc(m.name)} · ${esc(m.role)}</b><span>${esc(m.duty)}</span></li>`).join('')}</ul>`;
   return `<h2 class="w-h">Hỏi đáp</h2><p class="w-lead">Câu hỏi cư dân hay hỏi về toà nhà. Bấm câu hỏi để xem trả lời.</p>
     <div class="w-faq">${W.faq.map(f => `<details class="w-card"><summary>${esc(f.q)}${ic('chev')}</summary>
-      <div class="ans">${txt(f.a)}${f.members ? people() : ''}</div></details>`).join('')}</div>`;
+      <div class="ans">${txt(f.a)}${f.members ? people() : ''}${checkBox(f.checklist)}</div></details>`).join('')}</div>`;
 }
 
 /* ---------- Màn hình: Văn bản ---------- */

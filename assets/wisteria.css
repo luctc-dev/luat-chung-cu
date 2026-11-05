@@ -204,3 +204,19 @@ footer.w-foot a{color:var(--accent);font-weight:600}
 }
 @media (prefers-reduced-motion: reduce){.w-view{animation:none}.w-why>summary .ic,.w-faq summary .ic{transition:none}}
 @media print{.w-tabs,#ctx,.w-pager,.w-btn{display:none}}
+
+/* bảng kiểm hồ sơ */
+.w-check{margin-top:10px;border:1px solid var(--border);border-radius:12px;background:var(--card);font-weight:400}
+.w-check>summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:8px;min-height:48px;padding:10px 14px;font-weight:600;color:var(--tc,var(--accent))}
+.w-check>summary::-webkit-details-marker{display:none}
+.w-check>summary span{flex:1}
+.w-check>summary small{font-weight:400;color:var(--muted-fg)}
+.w-check[open]>summary>.ic:last-child{transform:rotate(180deg)}
+.w-check>:not(summary){margin-left:14px;margin-right:14px}
+.w-check .intro{margin-top:0;font-size:.95rem;text-align:left;color:var(--muted-fg)}
+.w-check h4{margin:14px 14px 6px;font-size:.95rem}
+.w-check ol{margin-top:0;margin-bottom:0;padding-left:1.6em}
+.w-check li{margin:6px 0;line-height:1.5}
+.w-check p.note{margin:14px 14px 0;color:var(--fg);font-size:.95rem}
+.w-check .w-law{margin-left:14px;margin-right:14px}
+.w-check>:last-child{margin-bottom:12px}
