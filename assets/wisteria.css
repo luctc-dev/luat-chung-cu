@@ -72,6 +72,21 @@ body.w .top p.sub{display:block;margin:0;font-size:.92rem}
 .w-cal a:hover span:first-child{text-decoration:underline}
 .w-cal .far{color:var(--muted-fg);font-size:.875rem;display:block}
 
+/* Đang quá hạn: việc cần làm ngay */
+.w-act{margin-top:10px;padding:12px 14px;border-radius:12px;background:var(--bad-bg);border:1px solid color-mix(in srgb,var(--bad) 35%,transparent)}
+.w-act .h{display:flex;align-items:center;gap:6px;color:var(--bad);font-weight:600;font-size:.94rem}
+.w-act p{margin:6px 0 0}
+.w-act .todo{font-weight:400}
+.w-act .note{color:var(--muted-fg);font-size:.92rem}
+.w-late{margin:0 0 22px}
+.w-late>h3,.w-sub{display:flex;align-items:center;gap:8px;font-size:1.1rem;margin:0 0 10px}
+.w-late>h3{color:var(--bad)}
+.w-sub{margin-top:4px}
+.w-lateitem{padding:14px;border-radius:14px;background:var(--card);border:1px solid var(--border);border-left:6px solid var(--tc);margin:0 0 10px}
+.w-lateitem .src{display:flex;gap:12px;align-items:flex-start;text-decoration:none;color:var(--fg)}
+.w-lateitem .src small{display:block;color:var(--tc);font-weight:600;font-size:.85rem}
+.w-lateitem .src b{display:block;line-height:1.4}
+
 /* Việc cần làm: thẻ lớn */
 .w-tcard{display:flex;flex-direction:column;gap:8px;padding:16px;border-radius:14px;background:var(--card);border:1px solid var(--border);border-top:6px solid var(--tc);text-decoration:none;color:var(--fg)}
 .w-tcard .top{display:flex;gap:12px;align-items:center}

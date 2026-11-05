@@ -78,10 +78,10 @@ function dueHtml(it) {
   const s = realStatus(it);
   if (s === 'done') return it.date ? `<span class="w-date">${fmt(it.date)}</span>` : '';
   if (!it.due) return it.date ? `<span class="w-date">${fmt(it.date)}</span>` : '';
-  const n = days(it.due);
-  if (n < 0) return `<span class="w-date bad">Hạn ${fmt(it.due)}, đã quá ${-n} ngày</span>`;
-  if (n === 0) return `<span class="w-date bad">Hạn hôm nay</span>`;
-  return `<span class="w-date">Hạn ${fmt(it.due)}, còn ${n} ngày</span>`;
+  const n = days(it.due), lb = it.due_kind === 'bqt' ? 'Hạn BQT đề nghị' : 'Hạn';
+  if (n < 0) return `<span class="w-date bad">${lb} ${fmt(it.due)}, đã quá ${-n} ngày</span>`;
+  if (n === 0) return `<span class="w-date bad">${lb} hôm nay</span>`;
+  return `<span class="w-date">${lb} ${fmt(it.due)}, còn ${n} ngày</span>`;
 }
 const progress = t => {
   const done = t.items.filter(it => it.status === 'done').length;
@@ -93,8 +93,15 @@ function viewSituation() {
   const all = W.tasks.flatMap(t => t.items);
   const soon = all.filter(it => it.due && it.status !== 'done' && days(it.due) >= 0)
     .sort((a, b) => a.due.localeCompare(b.due)).slice(0, 4);
+  const late = W.tasks.flatMap(t => t.items.filter(it => realStatus(it) === 'overdue').map(it => ({ t, it })))
+    .sort((a, b) => ((a.it.due_kind === 'bqt') - (b.it.due_kind === 'bqt')) || (a.it.due || '').localeCompare(b.it.due || ''));   // hạn theo luật trước
   return `<h2 class="w-h">Tình hình hôm nay</h2>
     <p class="w-lead">Theo các văn bản đến ngày ${fmt(W.site.updated)}. Chọn một việc để xem chi tiết.</p>
+    ${late.length ? `<section class="w-late"><h3>${ic('alert')}Đang quá hạn (${late.length})</h3>${late.map(({ t, it }) => `
+      <div class="w-lateitem tone-${t.tone}"><a class="src" href="#viec-${t.id}">${badge(t)}<span><small>Việc ${num(t)} · ${esc(t.title)}</small>
+        <b>${plain(it.text)}</b><span class="w-row"><span class="w-who">${ic('user')}${esc(WHO[it.who] || it.who)}</span>${dueHtml(it)}</span></span></a>
+        ${actBox(it, `<a class="w-btn" href="#viec-${t.id}">Xem cả việc ${ic('right')}</a>`)}</div>`).join('')}</section>` : ''}
+    <h3 class="w-sub">Tất cả các việc</h3>
     <ul class="w-tasklist">${W.tasks.map(t => `<li><a class="w-trow tone-${t.tone}" href="#viec-${t.id}">
       ${badge(t)}<span class="body"><span class="k">Việc ${num(t)}</span><span class="t">${esc(t.title)}</span>
       <span class="h">${plain(t.headline)}</span>${pill(t.status)}</span><span class="go">${ic('right')}</span></a></li>`).join('')}</ul>
@@ -135,9 +142,24 @@ function stepLi(it, i, t) {
       <div class="txt">${txt(stripCites(it.text))}</div>
       <div class="w-row"><span class="w-who">${ic('user')}${esc(WHO[it.who] || it.who)}</span>${pill(s)}${dueHtml(it)}</div>
       ${it.note ? `<p class="note">${txt(stripCites(it.note))}</p>` : ''}
+      ${s === 'overdue' ? actBox(it) : ''}
       ${(it.docs || []).length ? `<div class="docs">${it.docs.map(k => txt(`{{${k}}}`)).join('')}</div>` : ''}
       ${it.template ? `<button class="w-btn${isNext ? ' primary' : ''}" data-tpl="${esc(it.template)}">${ic('pen')}Soạn văn bản mẫu</button>` : ''}
       ${lawRow(it.text, it.cite, it.note)}</div></li>`;
+}
+/* mục đã quá hạn: việc cần làm ngay, ai làm, văn bản mẫu */
+function actBox(it, withLink) {
+  const a = it.overdue_action;
+  const n = it.due ? -days(it.due) : 0;
+  const head = `<div class="h">${ic('alert')}<span>${it.due_kind === 'bqt' ? 'Đã quá hạn BQT đề nghị' : 'Đã quá hạn'}${n > 0 ? ` ${n} ngày` : ''}</span></div>`;
+  if (!a) return `<div class="w-act">${head}<p>Chưa có đề xuất xử lý cho mục này.</p></div>`;
+  return `<div class="w-act">${head}
+    <p class="todo"><b>Cần làm ngay:</b> ${txt(stripCites(a.text))}</p>
+    <div class="w-row"><span class="w-who">${ic('user')}${esc(WHO[a.who] || a.who)}</span></div>
+    ${a.note ? `<p class="note">${txt(stripCites(a.note))}</p>` : ''}
+    <div>${(a.templates || []).map((id, k) => `<button class="w-btn${k === 0 ? ' primary' : ''}" data-tpl="${esc(id)}">${ic('pen')}${esc(W.templates[id].title)}</button>`).join('')}
+    ${withLink || ''}</div>
+    ${lawRow(a.text, a.cite)}</div>`;
 }
 function viewTask(t) {
   const i = W.tasks.indexOf(t), prev = W.tasks[i - 1], next = W.tasks[i + 1];
