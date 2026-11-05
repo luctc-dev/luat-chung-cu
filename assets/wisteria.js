@@ -100,7 +100,7 @@ function viewSituation() {
     ${late.length ? `<section class="w-late"><h3>${ic('alert')}Đang quá hạn (${late.length})</h3>${late.map(({ t, it }) => `
       <div class="w-lateitem tone-${t.tone}"><a class="src" href="#viec-${t.id}">${badge(t)}<span><small>Việc ${num(t)} · ${esc(t.title)}</small>
         <b>${plain(it.text)}</b><span class="w-row"><span class="w-who">${ic('user')}${esc(WHO[it.who] || it.who)}</span>${dueHtml(it)}</span></span></a>
-        ${actBox(it, `<a class="w-btn" href="#viec-${t.id}">Xem cả việc ${ic('right')}</a>`)}</div>`).join('')}</section>` : ''}
+        ${actBox(it, `<a class="w-btn" href="#viec-${t.id}">Xem toàn bộ tiến trình công việc ${ic('right')}</a>`)}</div>`).join('')}</section>` : ''}
     <h3 class="w-sub">Tất cả các việc</h3>
     <ul class="w-tasklist">${W.tasks.map(t => `<li><a class="w-trow tone-${t.tone}" href="#viec-${t.id}">
       ${badge(t)}<span class="body"><span class="k">Việc ${num(t)}</span><span class="t">${esc(t.title)}</span>
