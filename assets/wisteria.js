@@ -262,7 +262,7 @@ function showDialog(title, html) {
 }
 async function openDoc(k) {
   const d = docByKey(k); if (!d) return;
-  showDialog(`${esc(d.short)}<span class="doc">${esc(d.loai.split(' (')[0])} số ${esc(d.so_hieu)}, ngày ${fmt(d.date)}</span>`, '<p>Đang tải…</p>');
+  showDialog(`${esc(d.short)}<span class="doc">${esc(d.loai.split(' (')[0])} ${/^không số/i.test(d.so_hieu) ? '(không số)' : 'số ' + esc(d.so_hieu)}, ngày ${fmt(d.date)}</span>`, '<p>Đang tải…</p>');
   try {
     const r = await fetch(`/wisteria/van-ban/${k}.html`);
     if (!r.ok) throw new Error(r.status);
