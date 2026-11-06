@@ -20,8 +20,8 @@ function rich(s) {
 }
 /* ---------- hộp thoại căn cứ ---------- */
 function lawHtml(text) {
-  // tách "1. ", "a) " thành dòng riêng cho dễ đọc
-  const parts = text.split(/(?<!Điều)\s(?=(?:\d{1,2}[a-z]?\.\s)|(?:[a-zđ]\)\s))/);
+  // tách "1. ", "2.1.1. ", "II. " (mục phụ lục), "a) " thành dòng riêng cho dễ đọc
+  const parts = text.split(/(?<!Điều)\s(?=(?:\d{1,2}(?:\.\d{1,2})*[a-z]?\.\s)|(?:[IVX]{1,4}\.\s)|(?:[a-zđ]\)\s))/);
   return parts.map(s => /^[a-zđ]\)\s/.test(s) ? `<p class="pt">${esc(s)}</p>` : `<p>${esc(s)}</p>`).join('');
 }
 // bỏ dòng "Điều N. Tên điều" ở đầu, vì tiêu đề hộp thoại đã ghi
