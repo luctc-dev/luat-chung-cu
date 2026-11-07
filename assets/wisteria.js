@@ -2,7 +2,8 @@
    Ứng dụng một trang có định tuyến bằng # (mỗi mục một màn hình, không cuộn dài):
      #tinh-hinh (mặc định) · #viec · #viec-<id> (chi tiết một việc) · #hoi-dap · #van-ban
    Nút Back của trình duyệt quay lại màn hình trước và vị trí cuộn cũ.
-   Nạp /wisteria/data.json; nội dung văn bản ở /wisteria/van-ban/NN.html (dựng từ Markdown, không đăng Markdown).
+   Nạp data.json; nội dung văn bản ở van-ban/NN.html (dựng từ Markdown, không đăng Markdown). Đường dẫn tương đối
+   (trang ở <gốc>/wisteria/, gốc là / hoặc /luat-chung-cu/), nên địa chỉ phải có dấu / cuối.
    Dùng chung assets/cite.js: DATA, $, esc, el, rich, openCite, addCites.
    Mã nguồn: tools/wisteria_page/wisteria.js — dựng bằng python3 -I tools/build_wisteria_page.py. */
 'use strict';
@@ -183,7 +184,7 @@ function viewTask(t) {
     ${t.analysis ? `<details class="w-block w-why"><summary>${esc(t.analysis_title)} ${ic('chev')}</summary><div class="in">${t.analysis.map(p => `<p>${txt(p)}</p>`).join('')}</div></details>` : ''}
     ${t.templates.length ? `<section class="w-block"><h3>Văn bản mẫu</h3>${t.templates.map(id => `<button class="w-btn" data-tpl="${esc(id)}">${ic('pen')}${esc(W.templates[id].title)}</button>`).join('')}</section>` : ''}
     ${docs.length ? `<section class="w-block"><h3>Văn bản liên quan</h3><ul class="w-docs w-card">${docs.map(docRow).join('')}</ul></section>` : ''}
-    ${flows.length ? `<section class="w-block"><h3>Thủ tục theo luật</h3>${flows.map(c => `<a class="w-btn" href="/#${c}">${ic('map')}Sơ đồ: ${esc(W.cases[c])}</a>`).join('')}</section>` : ''}
+    ${flows.length ? `<section class="w-block"><h3>Thủ tục theo luật</h3>${flows.map(c => `<a class="w-btn" href="../#${c}">${ic('map')}Sơ đồ: ${esc(W.cases[c])}</a>`).join('')}</section>` : ''}
     <nav class="w-pager" aria-label="Chuyển việc">
       ${prev ? `<a href="#viec-${prev.id}">${ic('left')}<span><small>Việc ${num(prev)}</small>${esc(prev.title)}</span></a>` : '<span></span>'}
       ${next ? `<a class="nx" href="#viec-${next.id}"><span><small>Việc ${num(next)}</small>${esc(next.title)}</span>${ic('right')}</a>` : '<span></span>'}
@@ -264,7 +265,7 @@ async function openDoc(k) {
   const d = docByKey(k); if (!d) return;
   showDialog(`${esc(d.short)}<span class="doc">${esc(d.loai.split(' (')[0])} ${/^không số/i.test(d.so_hieu) ? '(không số)' : 'số ' + esc(d.so_hieu)}, ngày ${fmt(d.date)}</span>`, '<p>Đang tải…</p>');
   try {
-    const r = await fetch(`/wisteria/van-ban/${k}.html`);
+    const r = await fetch(`van-ban/${k}.html`);
     if (!r.ok) throw new Error(r.status);
     $('#dlgBody').innerHTML = `<p class="w-dmeta">${esc(d.dir)}</p><p class="w-mean"><b>Nội dung chính:</b> ${txt(stripCites(d.meaning))}</p>
       <div class="w-doc">${await r.text()}</div>
