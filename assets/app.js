@@ -7,6 +7,7 @@
 Object.assign(DATA, { root: null, nodes: {} });
 const state = { sel: {}, all: false, zoom: 1, failed: false };   // sel: đường dẫn nút → chỉ số lựa chọn
 const TREE_URL = document.currentScript.dataset.tree;
+const UI_VER = document.currentScript.dataset.ui;   // mã bản giao diện; dữ liệu nhánh ghi cùng mã
 
 /* ---------- nạp dữ liệu ---------- */
 const loading = {};          // id nhánh → Promise
@@ -23,6 +24,12 @@ function loadCase(id) {
   const o = DATA.root.options.find(x => x.id === id);
   if (!o) return Promise.reject(new Error('Không có nhánh ' + id));
   return loading[id] || (loading[id] = getJSON(o.file).then(c => {
+    // Dữ liệu thuộc bản giao diện khác (trang mở từ trước khi triển khai bản mới): tải lại trang một lần
+    if (c.ui && UI_VER && c.ui !== UI_VER) {
+      let tried = null;
+      try { tried = sessionStorage.getItem('ui-reload'); sessionStorage.setItem('ui-reload', c.ui); } catch (e) { /* bị chặn */ }
+      if (tried !== c.ui) { location.reload(); return new Promise(() => {}); }
+    }
     for (const k of ['nodes', 'cites', 'articles', 'sources', 'terms']) Object.assign(DATA[k], c[k] || {});
     ready.add(id);
   }).finally(() => { delete loading[id]; }));
