@@ -23,7 +23,7 @@ function loadCase(id) {
   const o = DATA.root.options.find(x => x.id === id);
   if (!o) return Promise.reject(new Error('Không có nhánh ' + id));
   return loading[id] || (loading[id] = getJSON(o.file).then(c => {
-    for (const k of ['nodes', 'cites', 'articles', 'sources']) Object.assign(DATA[k], c[k]);
+    for (const k of ['nodes', 'cites', 'articles', 'sources', 'terms']) Object.assign(DATA[k], c[k] || {});
     ready.add(id);
   }).finally(() => { delete loading[id]; }));
 }
